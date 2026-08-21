@@ -1,0 +1,23 @@
+{
+  "caption": "A cream-colored sportbike is parked on a concrete floor, with a white metal shelving unit to its right and slightly behind it; a woven wicker bed with beige mattress and brown blanket is visible behind the shelving unit, against a plain white wall.",
+  "annotations": [
+    {
+      "box": [177.0, 267.75, 242.25, 330.0],
+      "caption": [
+        "cream-colored sportbike viewed from rear, parked on concrete floor"
+      ]
+    },
+    {
+      "box": [129.0, 93.75, 354.0, 390.75],
+      "caption": [
+        "white metal shelving unit with four horizontal shelves, empty"
+      ]
+    },
+    {
+      "box": [231.0, 302.25, 348.75, 133.5],
+      "caption": [
+        "woven wicker frame with beige mattress and brown blanket, against wall"
+      ]
+    }
+  ]
+}
