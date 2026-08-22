@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="OccluRank: controllable occlusion-aware layout-to-image generation by adding just an ordinal rank.">
+  <meta property="og:title" content="OccluRank">
+  <meta property="og:description" content="Controllable occlusion-aware layout-to-image generation by adding just an ordinal rank.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://wenyang-hong.github.io/OccluRank/static/images/intro.png">
+  <title>OccluRank | Project Page</title>
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav-shell" aria-label="Primary navigation">
+      <a class="brand" href="#top">OccluRank</a>
+      <div class="nav-links">
+        <a href="#abstract">Abstract</a>
+        <a href="#method">Method</a>
+        <a href="#data">Data</a>
+        <a href="#results">Results</a>
+        <a href="#citation">Citation</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero section-shell">
+      <p class="eyebrow">Research project</p>
+      <h1>OccluRank</h1>
+      <p class="subtitle">Controllable Occlusion-Aware Layout-to-Image Generation<br>by Adding Just an Ordinal Rank</p>
+
+      <p class="authors">
+        Wenyang Hong<sup>1*</sup>, Yuan Wang<sup>2*</sup>, Yanbin Hao<sup>1&dagger;</sup>,
+        Lanqing Xue<sup>3</sup>, Ke Wang<sup>4</sup>, Xiang Wang<sup>5</sup>,
+        Kuien Liu<sup>1,6</sup>, Richang Hong<sup>1</sup>
+      </p>
+      <div class="affiliations">
+        <span><sup>1</sup>Hefei University of Technology</span>
+        <span><sup>2</sup>School of Cyber Science and Technology, USTC</span>
+        <span><sup>3</sup>LCFC</span>
+        <span><sup>4</sup>ByteDance Inc.</span>
+        <span><sup>5</sup>School of Artificial Intelligence and Data Science, USTC</span>
+        <span><sup>6</sup>Institute of Software, Chinese Academy of Sciences</span>
+      </div>
+      <p class="author-note"><sup>*</sup>Equal contribution &nbsp;&nbsp; <sup>&dagger;</sup>Corresponding author</p>
+
+      <div class="link-row" aria-label="Project links">
+        <!-- Replace this disabled item with a linked button when the paper is public. -->
+        <span class="button disabled" aria-disabled="true">Paper <small>Coming soon</small></span>
+        <a class="button primary" href="https://github.com/Wenyang-hong/OccluRank">Code</a>
+        <!-- Replace these disabled items with linked buttons after the releases. -->
+        <span class="button disabled" aria-disabled="true">Dataset <small>Coming soon</small></span>
+        <span class="button disabled" aria-disabled="true">Benchmark <small>Coming soon</small></span>
+      </div>
+
+      <figure class="hero-figure figure-card">
+        <img src="static/images/intro.png" alt="OccluRank compared with IFAdapter and SeeThrough3D" width="2000" height="800">
+        <figcaption>
+          OccluRank adds a single ordinal rank to each instance and models order-aware interaction without requiring additional geometric inputs.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="section section-shell" aria-labelledby="motivation-contributions-title">
+      <p class="section-kicker">Why OccluRank</p>
+      <h2 id="motivation-contributions-title">Motivation and contributions</h2>
+      <div class="overview-grid">
+        <article class="overview-card">
+          <h3>Motivation</h3>
+          <p>
+            Bounding-box layouts specify where instances should appear but cannot express which instance should appear in front. Existing approaches may require complex geometric inputs or inference procedures, while independent instance aggregation does not explicitly model occlusion-dependent interactions. Meanwhile, the lack of reliable occlusion-aware training data and comprehensive evaluation protocols limits both model development and systematic assessment.
+          </p>
+        </article>
+        <article class="overview-card">
+          <h3>Contributions</h3>
+          <ol class="contribution-list">
+            <li><strong>Method — OccluRank.</strong> One ordinal rank per instance plus OII enables explicit, controllable occlusion order without extra geometric inputs or specialized inference-time optimization.</li>
+            <li><strong>Dataset — OccluLayout.</strong> Geometry-derived front-to-back order, amodal boxes and masks, and fine-grained instance descriptions support reliable training.</li>
+            <li><strong>Benchmark — OccluLayout-Bench.</strong> Multiple MLLMs and FID jointly evaluate instance presence, spatial layout, attributes, occlusion order, and overall image quality.</li>
+          </ol>
+        </article>
+      </div>
+    </section>
+
+    <section id="abstract" class="section section-shell narrow">
+      <p class="section-kicker">Overview</p>
+      <h2>Abstract</h2>
+      <p>
+        Layout-to-image generation enables explicit spatial control through bounding-box layouts, yet bounding boxes specify only instance locations and cannot represent their occlusion order. Existing methods may rely on additional geometric conditions, employ complex inference procedures, or aggregate independently constructed instance representations without explicitly modeling their occlusion-dependent interactions.
+      </p>
+      <p>
+        We propose <strong>OccluRank</strong>, a simple and controllable occlusion-aware layout-to-image framework that augments each bounding box with only one ordinal rank. OccluRank encodes the user-specified occlusion order through lightweight rank-based conditioning and introduces an <strong>Order-aware Instance Interaction (OII)</strong> module to jointly update rank-conditioned instance representations before aggregation. This allows the specified order to guide information exchange among occluding instances without additional geometric inputs or specialized inference-time optimization. We further construct <strong>OccluLayout</strong>, a synthetic training dataset whose occlusion order and amodal annotations are derived directly from known scene geometry rather than estimated from partially occluded images using auxiliary prediction models. For comprehensive evaluation, we introduce <strong>OccluLayout-Bench</strong>, which uses multiple multimodal large language model evaluators to assess instance presence, spatial layout, attributes, and occlusion order, together with FID for overall image quality. Experiments show that OccluRank more reliably preserves target instances, follows specified layouts, and realizes desired occlusion relationships while maintaining comparable attribute consistency and overall image quality.
+      </p>
+    </section>
+
+    <section id="method" class="section section-shell">
+      <p class="section-kicker">Method</p>
+      <h2>Interaction before aggregation</h2>
+      <p class="section-lead">
+        OccluRank keeps the standard SDXL denoising pipeline and introduces order-aware interaction into the instance-conditioning pathway.
+      </p>
+
+      <figure class="figure-card wide-figure">
+        <img src="static/images/method.png" alt="Overview of the OccluRank pipeline" loading="lazy" width="2400" height="1042">
+        <figcaption>
+          Spatially aligned instance features receive ordinal rank embeddings, interact through OII, and are aggregated into a masked Instance Semantic Map for residual injection.
+        </figcaption>
+      </figure>
+
+      <div class="three-column">
+        <article class="concept-card">
+          <span class="number">01</span>
+          <h3>Ordinal rank conditioning</h3>
+          <p>Each instance receives one rank according to the user-specified foreground-to-background order.</p>
+        </article>
+        <article class="concept-card">
+          <span class="number">02</span>
+          <h3>Order-aware interaction</h3>
+          <p>OII jointly updates the rank-conditioned features of instances that compete at the same spatial location.</p>
+        </article>
+        <article class="concept-card">
+          <span class="number">03</span>
+          <h3>Masked feature injection</h3>
+          <p>The interacted features are aggregated and injected only within layout-conditioned regions of selected SDXL layers.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="data" class="section section-shell">
+      <p class="section-kicker">Data and evaluation</p>
+      <h2>OccluLayout and OccluLayout-Bench</h2>
+
+      <div class="data-grid">
+        <figure class="figure-card data-figure">
+          <img src="static/images/dataset.png" alt="Construction pipeline of the OccluLayout dataset" loading="lazy" width="1600" height="1011">
+          <figcaption>OccluLayout construction pipeline.</figcaption>
+        </figure>
+
+        <div class="data-copy">
+          <article>
+            <p class="mini-label">Training dataset</p>
+            <h3>OccluLayout</h3>
+            <p>Controllable 3D scenes provide reliable front-to-back order, amodal boxes and masks. Image editing and MLLM-based validation add visual diversity and fine-grained instance descriptions.</p>
+            <p class="stat-line"><strong>33,496</strong> training images &middot; <strong>114,047</strong> annotated instances</p>
+            <p class="release-note">Dataset link coming soon.</p>
+          </article>
+          <article>
+            <p class="mini-label">Evaluation benchmark</p>
+            <h3>OccluLayout-Bench</h3>
+            <p>A held-out benchmark that jointly assesses presence, spatial adherence, attributes, occlusion order, and overall image quality using multiple MLLM evaluators and FID.</p>
+            <p class="stat-line"><strong>1,000</strong> images &middot; <strong>3,386</strong> annotated instances</p>
+            <p class="release-note">Benchmark and evaluation links coming soon.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="section section-shell">
+      <p class="section-kicker">Experiments</p>
+      <h2>Qualitative results</h2>
+      <p class="section-lead">
+        OccluRank preserves requested instances and more consistently follows the prescribed front-to-back order under overlapping layouts.
+      </p>
+
+      <article class="result-block">
+        <h3>Main comparison</h3>
+        <figure class="figure-card">
+          <img src="static/images/qualitative.webp" alt="Qualitative comparison under overlapping layouts" loading="lazy" width="2400" height="1259">
+          <figcaption>Qualitative comparison under overlapping layouts. The numeric prefixes indicate the prescribed front-to-back order.</figcaption>
+        </figure>
+      </article>
+
+      <div class="two-column results-pair">
+        <article class="result-block">
+          <h3>Reversed instance order</h3>
+          <figure class="figure-card">
+            <img src="static/images/reverse-order.webp" alt="Results after reversing the specified instance order" loading="lazy" width="1600" height="1146">
+            <figcaption>The full model responds to changes in the user-specified order, while the variant without rank embeddings does not.</figcaption>
+          </figure>
+        </article>
+        <article class="result-block">
+          <h3>Ablation study</h3>
+          <figure class="figure-card">
+            <img src="static/images/ablation.webp" alt="Qualitative comparison of OccluRank ablation variants" loading="lazy" width="1600" height="1211">
+            <figcaption>Rank conditioning, OII, and local supervision contribute complementary improvements.</figcaption>
+          </figure>
+        </article>
+      </div>
+
+      <article class="result-block">
+        <h3>Generalization to unseen categories</h3>
+        <figure class="figure-card">
+          <img src="static/images/unseen.jpg" alt="OccluRank results on categories unseen during training" loading="lazy" width="2400" height="2472">
+          <figcaption>OccluRank transfers its order control to categories that are unseen during training.</figcaption>
+        </figure>
+      </article>
+    </section>
+
+    <section id="citation" class="section section-shell narrow">
+      <p class="section-kicker">Reference</p>
+      <h2>Citation</h2>
+      <p>The final BibTeX entry will be added after the public paper identifier is assigned.</p>
+      <div class="citation-box">
+        <button id="copy-citation" type="button" disabled>Copy BibTeX</button>
+        <pre><code>% BibTeX coming soon</code></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="section-shell footer-inner">
+      <span>OccluRank project page</span>
+      <a href="https://github.com/Wenyang-hong/OccluRank">GitHub</a>
+    </div>
+  </footer>
+
+  <script src="static/js/main.js"></script>
+</body>
+</html>
