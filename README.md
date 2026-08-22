@@ -183,7 +183,7 @@ The benchmark data and evaluation resources will be linked here after release.
 ## Repository structure
 
 ```text
-.
+OccluRank/
 |-- configs/
 |   |-- paper_infer.sh
 |   `-- paper_train.sh

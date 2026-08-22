@@ -340,13 +340,14 @@ h3 {
 
 .data-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.95fr);
-  gap: 26px;
+  grid-template-columns: 1fr;
+  gap: 22px;
   align-items: start;
 }
 
 .data-copy {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -382,6 +383,24 @@ h3 {
 
 .results-pair .result-block {
   margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+}
+
+.results-pair .figure-card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.results-pair .figure-card img {
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: #fff;
+}
+
+.results-pair .figure-card figcaption {
+  flex: 1;
 }
 
 .citation-box {
@@ -456,6 +475,10 @@ footer {
 
   .data-grid {
     gap: 18px;
+  }
+
+  .data-copy {
+    grid-template-columns: 1fr;
   }
 }
 
